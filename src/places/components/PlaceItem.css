@@ -41,11 +41,17 @@
 
 .place-item__modal-actions {
   text-align: right;
+  margin-bottom: 20px;
 }
 
 .place-item__actions button,
 .place-item__actions a {
   margin: 0.5rem;
+}
+
+.map-container{
+  height: 15rem;
+  width: 100%;
 }
 
 @media (min-width: 768px) {
