@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import {
   VALIDATOR_REQUIRE,
@@ -12,7 +12,8 @@ import { useForm } from "../../shared/hooks/form-hook";
 import "./Auth.css";
 
 const Auth = () => {
-  const [formState, inputHandler] = useForm(
+  const [isLoginMode, setIsLoginMode] = useState(true);
+  const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
         value: "",
@@ -25,7 +26,26 @@ const Auth = () => {
     },
     false
   );
-
+  const switchModeHandler = () => {
+    if (!isLoginMode) {
+      setFormData(
+        {
+            ...formState.inputs,
+          name: undefined,
+        },
+        formState.inputs.email.isValid && formState.inputs.passowrd.isValid
+      );
+    } else {
+      setFormData(
+        {
+          ...formState.inputs,
+          name: { value: "", isValid: false },
+        },
+        false
+      );
+    }
+    setIsLoginMode((prevMode) => !prevMode);
+  };
   const loginHandler = (event) => {
     event.preventDefault();
     console.log(formState.inputs);
@@ -33,9 +53,20 @@ const Auth = () => {
 
   return (
     <Card className="authentication">
-      <h2>Login Required</h2>
+      <h2>{isLoginMode ? "Login Required" : "SIGNUP REQUIRED"}</h2>
       <hr />
       <form className="authentication-form" onSubmit={loginHandler}>
+        {!isLoginMode && (
+          <Input
+            id="name"
+            type="text"
+            label="Name"
+            element="input"
+            errorText="Please enter a valid name."
+            validators={[VALIDATOR_REQUIRE()]}
+            onInput={inputHandler}
+          />
+        )}
         <Input
           id="email"
           type="email"
@@ -56,9 +87,12 @@ const Auth = () => {
         />
 
         <Button type="submit" disabled={!formState.isValid}>
-          LOGIN
+          {isLoginMode ? "LOGIN" : "SIGNUP"}
         </Button>
       </form>
+      <Button inverse onClick={switchModeHandler}>
+        SWITCH TO {isLoginMode ? "SIGNUP" : "LOGIN"}
+      </Button>
     </Card>
   );
 };
