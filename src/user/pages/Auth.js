@@ -1,4 +1,4 @@
-import React, { useState,useContext } from "react";
+import React, { useState, useContext } from "react";
 
 import {
   VALIDATOR_REQUIRE,
@@ -9,11 +9,11 @@ import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
 import Card from "../../shared/components/UIElements/Card";
 import { useForm } from "../../shared/hooks/form-hook";
-import {AuthContext} from '../../shared/context/auth-context'
+import { AuthContext } from "../../shared/context/auth-context";
 import "./Auth.css";
 
 const Auth = () => {
-  const auth=useContext(AuthContext)
+  const auth = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -21,7 +21,7 @@ const Auth = () => {
         value: "",
         isValid: false,
       },
-      passowrd: {
+      password: {
         value: "",
         isValid: false,
       },
@@ -32,10 +32,10 @@ const Auth = () => {
     if (!isLoginMode) {
       setFormData(
         {
-            ...formState.inputs,
+          ...formState.inputs,
           name: undefined,
         },
-        formState.inputs.email.isValid && formState.inputs.passowrd.isValid
+        formState.inputs.email.isValid && formState.inputs.password.isValid
       );
     } else {
       setFormData(
@@ -48,10 +48,42 @@ const Auth = () => {
     }
     setIsLoginMode((prevMode) => !prevMode);
   };
-  const loginHandler = (event) => {
+  const loginHandler = async (event) => {
     event.preventDefault();
-    console.log(formState.inputs);
-    auth.login()
+    if (isLoginMode) {
+      // fetch("http://localhost:5000/api/users/login", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     email: formState.inputs.email.value,
+      //     password: formState.inputs.password.value,
+      //   }),
+      // });
+    } else {
+      console.log('sss')
+      try {
+        const response = await fetch("http://localhost:5000/api/users/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: formState.inputs.name.value,
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          }),
+        });
+
+        const responseData = await response.json();
+        console.log(responseData);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    auth.login();
   };
 
   return (
@@ -81,7 +113,7 @@ const Auth = () => {
         />
         <Input
           type="password"
-          id="passowrd"
+          id="password"
           label="Password"
           element="input"
           errorText="Please enter a valid passowrd (atleast 5 characters)."
