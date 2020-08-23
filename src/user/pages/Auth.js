@@ -8,8 +8,8 @@ import {
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
 import Card from "../../shared/components/UIElements/Card";
-import ErrorModal from '../../shared/components/UIElements/ErrorModal'
-import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner'
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { useForm } from "../../shared/hooks/form-hook";
 import { AuthContext } from "../../shared/context/auth-context";
 import "./Auth.css";
@@ -83,63 +83,69 @@ const Auth = () => {
         });
 
         const responseData = await response.json();
+        if (!response.ok) {
+          throw new Error(responseData.message);
+        }
         console.log(responseData);
         setIsLoading(false);
         auth.login();
       } catch (error) {
         console.log(error);
         setIsLoading(false);
-        setError(error.message || "Something went wrong, please try again");
+        setError(error.message);
       }
     }
-    
-   
   };
-
+const errorHandler = () => {
+  setError(null)
+}
   return (
-    <Card className="authentication">
-      {isLoading && <LoadingSpinner asOverlay/>}
-      <h2>{isLoginMode ? "Login Required" : "SIGNUP REQUIRED"}</h2>
-      <hr />
-      <form className="authentication-form" onSubmit={loginHandler}>
-        {!isLoginMode && (
+    <>
+    <ErrorModal error={error} onClear={errorHandler}/>
+      <Card className="authentication">
+        {isLoading && <LoadingSpinner asOverlay />}
+        <h2>{isLoginMode ? "Login Required" : "SIGNUP REQUIRED"}</h2>
+        <hr />
+        <form className="authentication-form" onSubmit={loginHandler}>
+          {!isLoginMode && (
+            <Input
+              id="name"
+              type="text"
+              label="Name"
+              element="input"
+              errorText="Please enter a valid name."
+              validators={[VALIDATOR_REQUIRE()]}
+              onInput={inputHandler}
+            />
+          )}
           <Input
-            id="name"
-            type="text"
-            label="Name"
+            id="email"
+            type="email"
+            label="Email"
             element="input"
-            errorText="Please enter a valid name."
-            validators={[VALIDATOR_REQUIRE()]}
+            errorText="Please enter a valid email."
+            validators={[VALIDATOR_REQUIRE(), VALIDATOR_EMAIL()]}
             onInput={inputHandler}
           />
-        )}
-        <Input
-          id="email"
-          type="email"
-          label="Email"
-          element="input"
-          errorText="Please enter a valid email."
-          validators={[VALIDATOR_REQUIRE(), VALIDATOR_EMAIL()]}
-          onInput={inputHandler}
-        />
-        <Input
-          type="password"
-          id="password"
-          label="Password"
-          element="input"
-          errorText="Please enter a valid passowrd (atleast 5 characters)."
-          validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
-          onInput={inputHandler}
-        />
+          <Input
+            type="password"
+            id="password"
+            label="Password"
+            element="input"
+            errorText="Please enter a valid passowrd (atleast 5 characters)."
+            validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
+            onInput={inputHandler}
+          />
 
-        <Button type="submit" disabled={!formState.isValid}>
-          {isLoginMode ? "LOGIN" : "SIGNUP"}
+          <Button type="submit" disabled={!formState.isValid}>
+            {isLoginMode ? "LOGIN" : "SIGNUP"}
+          </Button>
+        </form>
+        <Button inverse onClick={switchModeHandler}>
+          SWITCH TO {isLoginMode ? "SIGNUP" : "LOGIN"}
         </Button>
-      </form>
-      <Button inverse onClick={switchModeHandler}>
-        SWITCH TO {isLoginMode ? "SIGNUP" : "LOGIN"}
-      </Button>
-    </Card>
+      </Card>
+    </>
   );
 };
 
