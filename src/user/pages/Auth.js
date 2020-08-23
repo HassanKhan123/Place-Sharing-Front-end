@@ -54,21 +54,34 @@ const Auth = () => {
   };
   const loginHandler = async (event) => {
     event.preventDefault();
-    setIsLoading(false);
+    setIsLoading(true);
     setError(false);
     if (isLoginMode) {
-      // fetch("http://localhost:5000/api/users/login", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     email: formState.inputs.email.value,
-      //     password: formState.inputs.password.value,
-      //   }),
-      // });
+      try {
+        const response = await fetch("http://localhost:5000/api/users/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          }),
+        });
+
+        const responseData = await response.json();
+        if (!response.ok) {
+          throw new Error(responseData.message);
+        }
+        console.log(responseData);
+        setIsLoading(false);
+        auth.login();
+      } catch (error) {
+        console.log(error);
+        setIsLoading(false);
+        setError(error.message);
+      }
     } else {
-      setIsLoading(true);
       try {
         const response = await fetch("http://localhost:5000/api/users/signup", {
           method: "POST",
@@ -96,12 +109,12 @@ const Auth = () => {
       }
     }
   };
-const errorHandler = () => {
-  setError(null)
-}
+  const errorHandler = () => {
+    setError(null);
+  };
   return (
     <>
-    <ErrorModal error={error} onClear={errorHandler}/>
+      <ErrorModal error={error} onClear={errorHandler} />
       <Card className="authentication">
         {isLoading && <LoadingSpinner asOverlay />}
         <h2>{isLoginMode ? "Login Required" : "SIGNUP REQUIRED"}</h2>
