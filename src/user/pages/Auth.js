@@ -8,6 +8,8 @@ import {
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
 import Card from "../../shared/components/UIElements/Card";
+import ErrorModal from '../../shared/components/UIElements/ErrorModal'
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner'
 import { useForm } from "../../shared/hooks/form-hook";
 import { AuthContext } from "../../shared/context/auth-context";
 import "./Auth.css";
@@ -15,6 +17,8 @@ import "./Auth.css";
 const Auth = () => {
   const auth = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
@@ -50,6 +54,8 @@ const Auth = () => {
   };
   const loginHandler = async (event) => {
     event.preventDefault();
+    setIsLoading(false);
+    setError(false);
     if (isLoginMode) {
       // fetch("http://localhost:5000/api/users/login", {
       //   method: "POST",
@@ -62,7 +68,7 @@ const Auth = () => {
       //   }),
       // });
     } else {
-      console.log('sss')
+      setIsLoading(true);
       try {
         const response = await fetch("http://localhost:5000/api/users/signup", {
           method: "POST",
@@ -78,16 +84,21 @@ const Auth = () => {
 
         const responseData = await response.json();
         console.log(responseData);
+        setIsLoading(false);
+        auth.login();
       } catch (error) {
         console.log(error);
+        setIsLoading(false);
+        setError(error.message || "Something went wrong, please try again");
       }
     }
-
-    auth.login();
+    
+   
   };
 
   return (
     <Card className="authentication">
+      {isLoading && <LoadingSpinner asOverlay/>}
       <h2>{isLoginMode ? "Login Required" : "SIGNUP REQUIRED"}</h2>
       <hr />
       <form className="authentication-form" onSubmit={loginHandler}>
