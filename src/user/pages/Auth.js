@@ -69,7 +69,7 @@ const Auth = () => {
           }
         );
 
-        auth.login();
+        auth.login(responseData.user.id);
       } catch (error) {}
     } else {
       try {
@@ -86,7 +86,7 @@ const Auth = () => {
           }
         );
 
-        auth.login();
+        auth.login(responseData.user.id);
       } catch (error) {}
     }
   };
