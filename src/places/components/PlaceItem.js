@@ -94,10 +94,10 @@ const PlaceItem = ({ place, onDelete }) => {
             <Button inverse onClick={openMapHandler}>
               VIEW ON MAP
             </Button>
-            {auth.isLoggedIn && (
+            {auth.userId === place.creator && (
               <Button to={`/places/${place.id}`}>EDIT</Button>
             )}
-            {auth.isLoggedIn && (
+            {auth.userId === place.creator && (
               <Button danger onClick={openConfirmHandler}>
                 DELETE
               </Button>

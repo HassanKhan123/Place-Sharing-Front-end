@@ -123,8 +123,8 @@ const Auth = () => {
             id="password"
             label="Password"
             element="input"
-            errorText="Please enter a valid passowrd (atleast 5 characters)."
-            validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
+            errorText="Please enter a valid passowrd (atleast 6 characters)."
+            validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(6)]}
             onInput={inputHandler}
           />
 
