@@ -8,6 +8,7 @@ import {
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
 import Card from "../../shared/components/UIElements/Card";
+import ImageUpload from '../../shared/components/FormElements/ImageUpload'
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { useForm } from "../../shared/hooks/form-hook";
@@ -109,6 +110,7 @@ const Auth = () => {
               onInput={inputHandler}
             />
           )}
+          {!isLoginMode && <ImageUpload id="image" center/>}
           <Input
             id="email"
             type="email"
