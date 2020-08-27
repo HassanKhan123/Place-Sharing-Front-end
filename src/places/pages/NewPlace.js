@@ -1,5 +1,5 @@
 import React, { useCallback, useReducer, useContext } from "react";
-import {useHistory} from 'react-router-dom'
+import { useHistory } from "react-router-dom";
 
 import {
   VALIDATOR_REQUIRE,
@@ -12,6 +12,8 @@ import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/context/auth-context";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
+
 import "./PlaceForm.css";
 
 const NewPlace = () => {
@@ -31,26 +33,30 @@ const NewPlace = () => {
         value: "",
         isValid: false,
       },
+      image: {
+        value: null,
+        isValid: false,
+      },
     },
     false
   );
-const history = useHistory()
+  const history = useHistory();
   const placeSubmitHandler = async (event) => {
     event.preventDefault();
     try {
-      const responseData = await sendRequest(
+      const formData = new FormData();
+      formData.append("title", formState.inputs.title.value);
+      formData.append("description", formState.inputs.description.value);
+      formData.append("address", formState.inputs.address.value);
+      formData.append("creator", auth.userId);
+      formData.append("image", formState.inputs.image.value);
+      await sendRequest(
         "http://localhost:5000/api/places",
         "POST",
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.description.value,
-          address: formState.inputs.address.value,
-          creator: auth.userId,
-        }),
-        {'Content-Type':'application/json'}
+        formData
       );
 
-      history.push('/')
+      history.push("/");
     } catch (error) {}
   };
 
@@ -84,6 +90,11 @@ const history = useHistory()
           errorText="Please enter a valid address."
           validators={[VALIDATOR_REQUIRE()]}
           onInput={inputHandler}
+        />
+        <ImageUpload
+          id="image"
+          input={inputHandler}
+          errorText="Please provide an image"
         />
 
         <Button type="submit" disabled={!formState.isValid}>
