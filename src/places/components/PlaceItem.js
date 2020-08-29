@@ -35,7 +35,11 @@ const PlaceItem = ({ place, onDelete }) => {
     try {
       await sendRequest(
         `http://localhost:5000/api/places/${place.id}`,
-        "DELETE"
+        "DELETE",
+        null,
+        {
+          Authorization: "Bearer " + auth.token,
+        }
       );
       onDelete(place.id);
     } catch (error) {}
@@ -81,7 +85,10 @@ const PlaceItem = ({ place, onDelete }) => {
         <Card className="place-item__content">
           {isLoading && <LoadingSpinner asOverlay />}
           <div className="place-item__image">
-            <img src={`http://localhost:5000/${place.image}`} alt={place.title} />
+            <img
+              src={`http://localhost:5000/${place.image}`}
+              alt={place.title}
+            />
           </div>
 
           <div className="place-item__info">
