@@ -34,7 +34,7 @@ const PlaceItem = ({ place, onDelete }) => {
     setShowConfirmModal(false);
     try {
       await sendRequest(
-        `http://localhost:5000/api/places/${place.id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/places/${place.id}`,
         "DELETE",
         null,
         {
@@ -86,7 +86,7 @@ const PlaceItem = ({ place, onDelete }) => {
           {isLoading && <LoadingSpinner asOverlay />}
           <div className="place-item__image">
             <img
-              src={`http://localhost:5000/${place.image}`}
+              src={`${process.env.REACT_APP_ASSET_URL}/${place.image}`}
               alt={place.title}
             />
           </div>
